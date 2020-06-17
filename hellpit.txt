@@ -1,0 +1,25 @@
+Step1,
+Installed CUDA 11 & cudnn 8, after days of effort still fails to build, finally gave up.
+Caffe is old, and the branch I used was even older, that it doesn't support anything newer than CUDA 10 & cudnn 7.5.
+CUDA 10 doesn't support any nvidia driver newer than 410.
+And on ubuntu 18.04, both the official version and the ppa version of nvidia-410 are not working(5 reinstalls to confirm),
+so had to switch to 16.04.
+After all the modifications of makefile.config and makefile, successfully built the MobileNet-SSD.
+Moral of the story: use something new and popular.
+
+
+Step2, download pictures and label using labelImg, python3 labelImg.py, creates xml annotations.
+Labels that are too similar won't work, learned from the hard way.
+Step3, follow the MobileNet-SSD instruction to create list of train, train validation, validation annotation sets with lmdb. No spaces or brackets...
+Step4, use gen_model to generate the deploy/train/test.prototxt, argument is number of labels and generated from template.
+Step5, modify solver_train.prototxt and train.
+Step6, use no_bn to create model and prototxt without norm batch layers, to increase speed.
+Step7, ncnn has a slightly different input layer, so prototxt has to be modified:
+layer {
+  name: "input"
+  type: "Input"
+  top: "data"
+  input_param {shape {xxxxx}}
+  }
+Step8, build ncnn and use caffetoncnn tool to generate ncnn param and bin files.
+Step9, study the two android projects and try to make the model work.
