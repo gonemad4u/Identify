@@ -1,7 +1,7 @@
 # Identify
 Uses caffe model trained from MobileNet-SSD on NCNN to detect konosuba chacters(main 4) and Shinpachi just for fun.   
 I only manually labeled 30 pictures, result is surpringly good.  
-Main steps are listed in hellpit.txt.   
+Main steps are listed in hellpit (hellpit.txt).   
 
 Network:    
 https://github.com/chuanqi305/MobileNet-SSD.git   
