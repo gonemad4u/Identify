@@ -12,3 +12,8 @@ https://github.com/Tencent/ncnn https://github.com/Tencent/ncnn/wiki/use-ncnn-wi
 Android deployment samples used for reference:     
 https://github.com/nihui/ncnn-android-squeezenet     
 https://github.com/chehongshu/ncnnforandroid_objectiondetection_Mobilenetssd    
+
+Examples:  
+(1.jpg)   
+(2.jpg)   
+(3.jpg)  
