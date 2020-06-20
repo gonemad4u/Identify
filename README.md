@@ -14,6 +14,6 @@ https://github.com/nihui/ncnn-android-squeezenet
 https://github.com/chehongshu/ncnnforandroid_objectiondetection_Mobilenetssd    
 
 Examples:  
-(1.jpg)   
+![Alt text](1.jpg?raw=true)   
 (2.jpg)   
 (3.jpg)  
