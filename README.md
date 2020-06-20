@@ -7,7 +7,8 @@ Network:
 https://github.com/chuanqi305/MobileNet-SSD.git   
 
 NCNN:    
-https://github.com/Tencent/ncnn https://github.com/Tencent/ncnn/wiki/use-ncnn-with-alexnet.zh   
+https://github.com/Tencent/ncnn   
+https://github.com/Tencent/ncnn/wiki/use-ncnn-with-alexnet.zh   
 
 Android deployment samples used for reference:     
 https://github.com/nihui/ncnn-android-squeezenet     
