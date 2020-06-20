@@ -84,7 +84,7 @@ public class MainActivity extends Activity
                 long time = end - start;
                 Log.d("DEBUG", result.toString());
                 drawResults(result);
-                String show_text = "KONOSUBA!" + "\nDetection time：" + time + "ms";
+                String show_text = "KONOSUBA!" + "\nCPU detection time：" + time + "ms";
                 infoResult.setText(show_text);
             }
         });
@@ -102,7 +102,7 @@ public class MainActivity extends Activity
                 Log.d("DEBUG", "AFTER");
                 float[] result = identify.Detect(yourSelectedImage, true);
                 drawResults(result);
-                String show_text = "KONOSUBA!" + "\nDetection time：" + time + "ms";
+                String show_text = "KONOSUBA!" + "\nGPU detection time：" + time + "ms";
                 infoResult.setText(show_text);
             }
         });
@@ -132,7 +132,9 @@ public class MainActivity extends Activity
                 paint.setStyle(Paint.Style.FILL);
                 paint.setStrokeWidth(1);
                 Log.d("HEIGHT", String.valueOf(get_finalresult[object_num][3]*rgba.getHeight() + 100));
-                canvas.drawText(resultLabel.get((int) get_finalresult[object_num][0]) + "\n" + get_finalresult[object_num][1],
+                canvas.drawText(resultLabel.get((int) get_finalresult[object_num][0]),
+                        get_finalresult[object_num][2]*rgba.getWidth(),get_finalresult[object_num][3]*rgba.getHeight()+10,paint);
+                canvas.drawText( String.valueOf(get_finalresult[object_num][1]),
                         get_finalresult[object_num][2]*rgba.getWidth(),get_finalresult[object_num][3]*rgba.getHeight()+20,paint);
             }
             imageView.setImageBitmap(rgba);
