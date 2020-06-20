@@ -1,4 +1,6 @@
 background
-plane
-dog
-cat
+Aqua
+Megumin
+Darkness
+Kazuma
+Shinpachi

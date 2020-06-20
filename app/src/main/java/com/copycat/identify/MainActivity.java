@@ -34,7 +34,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends Activity
@@ -79,25 +78,14 @@ public class MainActivity extends Activity
             public void onClick(View arg0) {
                 if (yourSelectedImage == null)
                     return;
-
-                try {
-                    float[] result = identify.Detect(yourSelectedImage, false);
-                    float[] r = get_max_result(result);
-                    String show_text = "result：" + Arrays.toString(r) + "\nname：" + resultLabel.get((int) r[0]) + "\nprobability：" + r[1];
-                    infoResult.setText(show_text);
-                    Bitmap rgba = yourSelectedImage.copy(Bitmap.Config.ARGB_8888, true);
-                    Canvas canvas = new Canvas(rgba);
-                    //图像上画矩形
-                    Paint paint = new Paint();
-                    paint.setColor(Color.RED);
-                    paint.setStyle(Paint.Style.STROKE);//不填充
-                    paint.setStrokeWidth(10); //线的宽度
-                    canvas.drawRect(r[2]*rgba.getWidth(), r[3]*rgba.getHeight(), r[4]*rgba.getWidth(), r[5]*rgba.getHeight(), paint);
-                    imageView.setImageBitmap(rgba);
-                }
-                catch (ArrayIndexOutOfBoundsException e){
-                    infoResult.setText("detect failed");
-                }
+                long start = System.currentTimeMillis();
+                float[] result = identify.Detect(yourSelectedImage, false);
+                long end = System.currentTimeMillis();
+                long time = end - start;
+                Log.d("DEBUG", result.toString());
+                drawResults(result);
+                String show_text = "KONOSUBA!" + "\nDetection time：" + time + "ms";
+                infoResult.setText(show_text);
             }
         });
 
@@ -107,41 +95,59 @@ public class MainActivity extends Activity
             public void onClick(View arg0) {
                 if (yourSelectedImage == null)
                     return;
-                try {
-                    float[] result = identify.Detect(yourSelectedImage, true);
-                    Bitmap rgba = yourSelectedImage.copy(Bitmap.Config.ARGB_8888, true);
-                    float[] r = get_max_result(result);
-                    String show_text = "result：" + Arrays.toString(r) + "\nname：" + resultLabel.get((int) r[0]) + "\nprobability：" + r[1];
-                    infoResult.setText(show_text);
-
-                    Canvas canvas = new Canvas(rgba);
-                    //图像上画矩形
-                    Paint paint = new Paint();
-                    paint.setColor(Color.RED);
-                    paint.setStyle(Paint.Style.STROKE);//不填充
-                    paint.setStrokeWidth(10); //线的宽度
-                    canvas.drawRect(r[2]*rgba.getWidth(), r[3]*rgba.getHeight(), r[4]*rgba.getWidth(), r[5]*rgba.getHeight(), paint);
-                    imageView.setImageBitmap(rgba);
-
-                }
-                catch (ArrayIndexOutOfBoundsException e){
-                    infoResult.setText("detect failed");
-                }
-
-
-                {
-
-                    //infoResult.setText(result);
-                }
+                long start = System.currentTimeMillis();
+                identify.Detect(yourSelectedImage, true);
+                long end = System.currentTimeMillis();
+                long time = end - start;
+                Log.d("DEBUG", "AFTER");
+                float[] result = identify.Detect(yourSelectedImage, true);
+                drawResults(result);
+                String show_text = "KONOSUBA!" + "\nDetection time：" + time + "ms";
+                infoResult.setText(show_text);
             }
         });
+    }
+
+    // draws results
+    private void drawResults(float[] result) {
+        try {
+            Bitmap rgba = yourSelectedImage.copy(Bitmap.Config.ARGB_8888, true);
+            // init paint
+            Canvas canvas = new Canvas(rgba);
+            Paint paint = new Paint();
+
+            float get_finalresult[][] = backToTwoArry(result);
+            int object_num = 0;
+            int num = result.length/6;// number of object
+            // draw
+            for(object_num = 0; object_num < num; object_num++){
+                // draw on picture
+                paint.setColor(Color.MAGENTA);
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(5);
+                canvas.drawRect(get_finalresult[object_num][2] * rgba.getWidth(), get_finalresult[object_num][3] * rgba.getHeight(),
+                        get_finalresult[object_num][4] * rgba.getWidth(), get_finalresult[object_num][5] * rgba.getHeight(), paint);
+                // draw label
+                paint.setColor(Color.BLACK);
+                paint.setStyle(Paint.Style.FILL);
+                paint.setStrokeWidth(1);
+                Log.d("HEIGHT", String.valueOf(get_finalresult[object_num][3]*rgba.getHeight() + 100));
+                canvas.drawText(resultLabel.get((int) get_finalresult[object_num][0]) + "\n" + get_finalresult[object_num][1],
+                        get_finalresult[object_num][2]*rgba.getWidth(),get_finalresult[object_num][3]*rgba.getHeight()+20,paint);
+            }
+            imageView.setImageBitmap(rgba);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            infoResult.setText("detect failed");
+            Log.e("Array", e.getMessage());
+        }
     }
 
     // load label's name
     private void readCacheLabelFromLocalFile() {
         try {
             AssetManager assetManager = getApplicationContext().getAssets();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open("words.txt")));//这里是label的文件
+            BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open("words.txt")));
             String readLine = null;
             while ((readLine = reader.readLine()) != null) {
                 resultLabel.add(readLine);
@@ -156,6 +162,7 @@ public class MainActivity extends Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        // after selecting picture
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && null != data) {
@@ -167,19 +174,17 @@ public class MainActivity extends Activity
                     Bitmap bitmap = decodeUri(selectedImage);
 
                     Bitmap rgba = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-                    // resize to 227x227
+                    // resize to 300*300 cause fitting training parameter
                     yourSelectedImage = Bitmap.createScaledBitmap(rgba, 300, 300, false);
 
                     rgba.recycle();
 
-                    //imageView.setImageBitmap(bitmap);
+                    imageView.setImageBitmap(yourSelectedImage);
                 }
             }
             catch (FileNotFoundException e)
             {
-                Log.e("MainActivity", "FileNotFoundException");
-                return;
+                Log.e("MainActivity", "FileNotFoundException" + e.getMessage());
             }
         }
     }
@@ -192,7 +197,7 @@ public class MainActivity extends Activity
         BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
 
         // The new size we want to scale to
-        final int REQUIRED_SIZE = 400;
+        final int REQUIRED_SIZE = 500;
 
         // Find the correct scale value. It should be the power of 2.
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
@@ -213,26 +218,23 @@ public class MainActivity extends Activity
         return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
     }
 
-    // get max probability label
-    private float[] get_max_result(float[] result) {
-        Log.e("get_max_result", "ENTERED");
-        float[] ret = {0,0,0,0,0,0};
-        if (result.length == 0) {
-            return ret;
-        }
-        int num_rs = result.length / 6;
-        float maxProp = result[1];
-        int maxI = 0;
-        for(int i = 1; i<num_rs;i++){
-            if(maxProp<result[i*6+1]){
-                maxProp = result[i*6+1];
-                maxI = i;
+    // restore the one dimensional array back to two dimensional array
+    public static float[][] backToTwoArry(float[] inputfloat){
+        int num = inputfloat.length/6;
+
+        float[][] outputfloat = new float[num][6];
+        int k = 0;
+        for(int i = 0; i < num ; i++)
+        {
+            int j = 0;
+
+            while(j<6)
+            {
+                outputfloat[i][j] =  inputfloat[k];
+                k++;
+                j++;
             }
         }
-
-        for(int j=0;j<6;j++){
-            ret[j] = result[maxI*6 + j];
-        }
-        return ret;
+        return outputfloat;
     }
 }
