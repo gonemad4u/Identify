@@ -15,5 +15,5 @@ https://github.com/chehongshu/ncnnforandroid_objectiondetection_Mobilenetssd
 
 Examples:  
 ![Alt text](1.jpg?raw=true)   
-(2.jpg)   
-(3.jpg)  
+![Alt text](2.jpg?raw=true)    
+![Alt text](3.jpg?raw=true)  
