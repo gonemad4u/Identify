@@ -45,6 +45,7 @@ public class MainActivity extends Activity
     private Bitmap yourSelectedImage = null;
     private List<String> resultLabel = new ArrayList<>();
     private Identify identify = new Identify();
+    private Bitmap bitmap = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -111,7 +112,7 @@ public class MainActivity extends Activity
     // draws results
     private void drawResults(float[] result) {
         try {
-            Bitmap rgba = yourSelectedImage.copy(Bitmap.Config.ARGB_8888, true);
+            Bitmap rgba = bitmap.copy(Bitmap.Config.ARGB_8888, true);;
             // init paint
             Canvas canvas = new Canvas(rgba);
             Paint paint = new Paint();
@@ -130,12 +131,12 @@ public class MainActivity extends Activity
                 // draw label
                 paint.setColor(Color.BLACK);
                 paint.setStyle(Paint.Style.FILL);
-                paint.setStrokeWidth(1);
+                paint.setStrokeWidth(10);
                 Log.d("HEIGHT", String.valueOf(get_finalresult[object_num][3]*rgba.getHeight() + 100));
                 canvas.drawText(resultLabel.get((int) get_finalresult[object_num][0]),
-                        get_finalresult[object_num][2]*rgba.getWidth(),get_finalresult[object_num][3]*rgba.getHeight()+10,paint);
+                        get_finalresult[object_num][2]*rgba.getWidth()+5,get_finalresult[object_num][3]*rgba.getHeight()+15,paint);
                 canvas.drawText( String.valueOf(get_finalresult[object_num][1]),
-                        get_finalresult[object_num][2]*rgba.getWidth(),get_finalresult[object_num][3]*rgba.getHeight()+20,paint);
+                        get_finalresult[object_num][2]*rgba.getWidth()+5,get_finalresult[object_num][3]*rgba.getHeight()+30,paint);
             }
             imageView.setImageBitmap(rgba);
         }
@@ -173,7 +174,7 @@ public class MainActivity extends Activity
             try
             {
                 if (requestCode == SELECT_IMAGE) {
-                    Bitmap bitmap = decodeUri(selectedImage);
+                    bitmap = decodeUri(selectedImage);
 
                     Bitmap rgba = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                     // resize to 300*300 cause fitting training parameter
@@ -181,7 +182,7 @@ public class MainActivity extends Activity
 
                     rgba.recycle();
 
-                    imageView.setImageBitmap(yourSelectedImage);
+                    imageView.setImageBitmap(bitmap);
                 }
             }
             catch (FileNotFoundException e)
