@@ -14,6 +14,5 @@ Android deployment samples used for reference:
 https://github.com/nihui/ncnn-android-squeezenet     
 https://github.com/chehongshu/ncnnforandroid_objectiondetection_Mobilenetssd    
 
-Examples:  
-![Alt text](2.jpg?raw=true)    
-![Alt text](3.jpg?raw=true)  
+Example:  
+![Alt text](1.jpg?raw=true)    
